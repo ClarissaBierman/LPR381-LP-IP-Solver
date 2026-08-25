@@ -1,4 +1,4 @@
-﻿using LPR381_Project.Algorithms;
+using LPR381_Project.Algorithms;
 using LPR381_Project.IO;
 using LPR381_Project.Modles;
 using System;
@@ -134,8 +134,8 @@ namespace LPR381_Project
                 return;
             }
 
-           
-            Console.WriteLine("Sensitivity analysis not yet wired in [Person 4].");
+            SensitivityAnalysis.Run(_model, _lastSolution, _output);
+            Console.WriteLine("Sensitivity analysis performed. Check the output logs.");
         }
 
         private void SaveOutput()

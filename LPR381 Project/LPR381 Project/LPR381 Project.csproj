@@ -48,6 +48,7 @@
     <Compile Include="Algorithms\IAlgorithm.cs" />
     <Compile Include="Algorithms\PrimalSimplex.cs" />
     <Compile Include="Algorithms\RevisedPrimalSimplex.cs" />
+    <Compile Include="Algorithms\SensitivityAnalysis.cs" />
     <Compile Include="IO\InputParser.cs" />
     <Compile Include="IO\OutputWriter.cs" />
     <Compile Include="Modles\Constraint.cs" />

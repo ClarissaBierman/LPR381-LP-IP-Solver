@@ -1,4 +1,4 @@
-﻿using LPR381_Project.Modles;
+using LPR381_Project.Modles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +20,9 @@ namespace LPR381_Project.Algorithms
 
         /// Column index of the basic variable for each constraint row (index 0 = row 1 of Tableau).
         public int[] BasicVariableIndices { get; set; } = System.Array.Empty<int>();
+
+        /// Initial basic variables, used to locate the inverse basis matrix B^-1 in the final tableau.
+        public int[] InitialBasicVariableIndices { get; set; } = System.Array.Empty<int>();
 
         /// True if any artificial-variable column exists (needed to check feasibility at the end)
         public List<int> ArtificialColumns { get; set; } = new List<int>();

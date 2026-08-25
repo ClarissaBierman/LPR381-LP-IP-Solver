@@ -1,4 +1,4 @@
-﻿using LPR381_Project.Modles;
+using LPR381_Project.Modles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -220,6 +220,7 @@ namespace LPR381_Project.Algorithms
                 Tableau = tableau,
                 ColumnLabels = columnLabels.ToArray(),
                 BasicVariableIndices = basicVariableIndices,
+                InitialBasicVariableIndices = (int[])basicVariableIndices.Clone(),
                 ArtificialColumns = artificialColumns,
                 VariableMaps = variableMaps,
                 OriginalVariableCount = model.VariableCount,
