@@ -14,3 +14,10 @@ C:\Users\motla\OneDrive\Documents\GitHub\LPR381-LP-IP-Solver\LPR381 Project\LPR3
 C:\Users\motla\OneDrive\Documents\GitHub\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\bin\Debug\LPR381 Project.exe.config
 C:\Users\motla\OneDrive\Documents\GitHub\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\bin\Debug\LPR381 Project.exe
 C:\Users\motla\OneDrive\Documents\GitHub\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\bin\Debug\LPR381 Project.pdb
+C:\Users\User\OneDrive - belgiumcampus.ac.za\Documents\Belgium\Third Year 2026\LPR381\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\bin\Debug\LPR381 Project.exe.config
+C:\Users\User\OneDrive - belgiumcampus.ac.za\Documents\Belgium\Third Year 2026\LPR381\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\bin\Debug\LPR381 Project.exe
+C:\Users\User\OneDrive - belgiumcampus.ac.za\Documents\Belgium\Third Year 2026\LPR381\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\bin\Debug\LPR381 Project.pdb
+C:\Users\User\OneDrive - belgiumcampus.ac.za\Documents\Belgium\Third Year 2026\LPR381\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\obj\Debug\LPR381 Project.csproj.AssemblyReference.cache
+C:\Users\User\OneDrive - belgiumcampus.ac.za\Documents\Belgium\Third Year 2026\LPR381\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\obj\Debug\LPR381 Project.csproj.CoreCompileInputs.cache
+C:\Users\User\OneDrive - belgiumcampus.ac.za\Documents\Belgium\Third Year 2026\LPR381\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\obj\Debug\LPR381 Project.exe
+C:\Users\User\OneDrive - belgiumcampus.ac.za\Documents\Belgium\Third Year 2026\LPR381\LPR381-LP-IP-Solver\LPR381 Project\LPR381 Project\obj\Debug\LPR381 Project.pdb

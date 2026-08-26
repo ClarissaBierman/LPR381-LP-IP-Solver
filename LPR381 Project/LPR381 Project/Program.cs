@@ -111,6 +111,9 @@ namespace LPR381_Project
                 case AlgorithmMenu.RevisedPrimalSimplex:
                     algorithm = new RevisedPrimalSimplex();
                     break;
+                case AlgorithmMenu.BranchAndBoundSimplex:
+                    algorithm = new BranchAndBoundSimplex();
+                    break;
                 default:
                     algorithm = null;
                     break;

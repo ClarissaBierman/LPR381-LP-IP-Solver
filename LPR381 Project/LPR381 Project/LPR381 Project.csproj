@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\BranchAndBoundSimplex.cs" />
     <Compile Include="Algorithms\CanonicalForm.cs" />
     <Compile Include="Algorithms\CanonicalFormBuilder.cs" />
     <Compile Include="Algorithms\IAlgorithm.cs" />
