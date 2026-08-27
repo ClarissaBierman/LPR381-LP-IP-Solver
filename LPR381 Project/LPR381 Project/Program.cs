@@ -114,6 +114,12 @@ namespace LPR381_Project
                 case AlgorithmMenu.BranchAndBoundSimplex:
                     algorithm = new BranchAndBoundSimplex();
                     break;
+                case AlgorithmMenu.CuttingPlane:
+                    algorithm = new CuttingPlane();
+                    break;
+                case AlgorithmMenu.BranchAndBoundKnapsack:
+                    algorithm = new BranchAndBoundKnapsack();
+                    break;
                 default:
                     algorithm = null;
                     break;
