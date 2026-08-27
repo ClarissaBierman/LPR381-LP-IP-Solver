@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+	<Compile Include="Algorithms\BranchAndBoundKnapsack.cs" />
+	<Compile Include="Algorithms\CuttingPlane.cs" />
     <Compile Include="Algorithms\BranchAndBoundSimplex.cs" />
     <Compile Include="Algorithms\CanonicalForm.cs" />
     <Compile Include="Algorithms\CanonicalFormBuilder.cs" />
