@@ -145,6 +145,7 @@ namespace LPR381_Project
 
             SensitivityAnalysis.Run(_model, _lastSolution, _output);
             Console.WriteLine("Sensitivity analysis performed. Check the output logs.");
+            SensitivityAnalysis.InteractiveMenu(_model, _lastSolution, _output);
         }
 
         private void SaveOutput()

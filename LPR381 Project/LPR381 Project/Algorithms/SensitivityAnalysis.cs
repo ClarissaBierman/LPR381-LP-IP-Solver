@@ -98,7 +98,7 @@ namespace LPR381_Project.Algorithms
 
                 int colIndex = canon.VariableMaps[j].Components[0].ColumnIndex;
                 double currentC = model.ObjectiveCoefficients[j];
-                
+
                 int basicRow = -1;
                 for (int r = 0; r < m; r++)
                 {
@@ -117,7 +117,7 @@ namespace LPR381_Project.Algorithms
                     if (model.Objective == ObjectiveType.Min)
                     {
                         maxC = double.PositiveInfinity;
-                        minC = currentC - zMinusC; 
+                        minC = currentC - zMinusC;
                     }
                     string minStr = double.IsNegativeInfinity(minC) ? "-Infinity" : OutputWriter.Round3(minC).ToString("0.000");
                     string maxStr = double.IsPositiveInfinity(maxC) ? "+Infinity" : OutputWriter.Round3(maxC).ToString("0.000");
@@ -130,8 +130,8 @@ namespace LPR381_Project.Algorithms
 
                     for (int k = 0; k < rhsCol; k++)
                     {
-                        if (Array.IndexOf(solution.BasicVariableIndices, k) != -1) continue; 
-                        if (canon.ArtificialColumns.Contains(k)) continue; 
+                        if (Array.IndexOf(solution.BasicVariableIndices, k) != -1) continue;
+                        if (canon.ArtificialColumns.Contains(k)) continue;
 
                         double zMinusC_k = solution.FinalTableau[0, k];
                         double y_rk = solution.FinalTableau[basicRow, k];
@@ -185,10 +185,10 @@ namespace LPR381_Project.Algorithms
             {
                 output.AppendLine("Strong duality check failed.");
             }
-            
+
             output.AppendHeader("Dual Problem Formulation");
-            output.AppendLine($"Objective: {(model.Objective == ObjectiveType.Max ? "Min" : "Max")} W = " + 
-                string.Join(" + ", model.Constraints.Select((c, i) => $"{c.Rhs} y{i+1}")).Replace("+ -", "- "));
+            output.AppendLine($"Objective: {(model.Objective == ObjectiveType.Max ? "Min" : "Max")} W = " +
+                string.Join(" + ", model.Constraints.Select((c, i) => $"{c.Rhs} y{i + 1}")).Replace("+ -", "- "));
             for (int j = 0; j < model.VariableCount; j++)
             {
                 var terms = new List<string>();
@@ -196,10 +196,10 @@ namespace LPR381_Project.Algorithms
                 {
                     double coeff = model.Constraints[i].Coefficients[j];
                     if (coeff != 0)
-                        terms.Add($"{coeff} y{i+1}");
+                        terms.Add($"{coeff} y{i + 1}");
                 }
                 if (terms.Count == 0) terms.Add("0");
-                
+
                 string rel = ">=";
                 if (model.Objective == ObjectiveType.Max)
                 {
@@ -213,10 +213,10 @@ namespace LPR381_Project.Algorithms
                     else if (model.SignRestrictions[j] == VariableType.Urs) rel = "=";
                     else rel = ">=";
                 }
-                
-                output.AppendLine($"Constraint {j+1}: {string.Join(" + ", terms).Replace("+ -", "- ")} {rel} {model.ObjectiveCoefficients[j]}");
+
+                output.AppendLine($"Constraint {j + 1}: {string.Join(" + ", terms).Replace("+ -", "- ")} {rel} {model.ObjectiveCoefficients[j]}");
             }
-            
+
             output.AppendLine("Dual Variable Restrictions:");
             for (int i = 0; i < m; i++)
             {
@@ -231,9 +231,9 @@ namespace LPR381_Project.Algorithms
                     if (model.Constraints[i].Relation == RelationType.GreaterOrEqual) res = ">= 0";
                     else if (model.Constraints[i].Relation == RelationType.LessOrEqual) res = "<= 0";
                 }
-                output.AppendLine($"y{i+1} {res}");
+                output.AppendLine($"y{i + 1} {res}");
             }
-            
+
             // Adding Activities / Constraints Theory
             output.AppendHeader("Adding New Activities or Constraints");
             output.AppendLine("To add a new activity (variable x_new with coefficients c_new and A_new):");
@@ -244,6 +244,211 @@ namespace LPR381_Project.Algorithms
             output.AppendLine("1. Check if the current optimal solution satisfies the new constraint.");
             output.AppendLine("2. If it does, the current solution remains optimal.");
             output.AppendLine("3. If it does not, add the constraint to the final tableau and use the Dual Simplex Method to restore feasibility.");
+        }
+
+
+        public static void InteractiveMenu(LPModel model, Solution solution, OutputWriter output)
+        {
+            while (true)
+            {
+                Console.WriteLine("1. Apply change to a variable's objective coefficient");
+                Console.WriteLine("2. Apply change to a constraint RHS");
+                Console.WriteLine("3. Add a new activity");
+                Console.WriteLine("4. Add a new constraint");
+                Console.WriteLine("0. Back");
+                Console.Write("Choice: ");
+                var choice = Console.ReadLine()?.Trim();
+
+                if (choice == "0" || choice == null) return;
+
+                switch (choice)
+                {
+                    case "1": ApplyVariableChange(model, solution, output); break;
+                    case "2": ApplyRhsChange(model, solution, output); break;
+                    case "3": AddNewActivity(model, solution, output); break;
+                    case "4": AddNewConstraint(model, solution, output); break;
+                    default: Console.WriteLine("Invalid choice."); break;
+                }
+            }
+        }
+
+        private static void ApplyVariableChange(LPModel model, Solution solution, OutputWriter output)
+        {
+            Console.Write($"Select variable index (1-{model.VariableCount}): ");
+            if (!int.TryParse(Console.ReadLine(), out int idx) || idx < 1 || idx > model.VariableCount)
+            {
+                Console.WriteLine("Invalid variable index.");
+                return;
+            }
+            int j = idx - 1;
+
+            bool isBasic = Array.IndexOf(solution.BasicVariableIndices, j) != -1;
+            Console.WriteLine($"x{idx} is currently {(isBasic ? "Basic" : "Non-Basic")}, coefficient = {model.ObjectiveCoefficients[j]}");
+            Console.Write("New objective coefficient: ");
+            if (!double.TryParse(Console.ReadLine(), out double newCoeff))
+            {
+                Console.WriteLine("Invalid value.");
+                return;
+            }
+
+            var clone = CloneModel(model);
+            clone.ObjectiveCoefficients[j] = newCoeff;
+
+            output.AppendHeader($"Apply Change - x{idx} coefficient {model.ObjectiveCoefficients[j]} -> {newCoeff}");
+            var newSolution = new PrimalSimplex().Solve(clone, output);
+            ReportChangeResult(solution, newSolution, output);
+        }
+
+        private static void ApplyRhsChange(LPModel model, Solution solution, OutputWriter output)
+        {
+            int m = model.Constraints.Count;
+            Console.Write($"Select constraint index (1-{m}): ");
+            if (!int.TryParse(Console.ReadLine(), out int idx) || idx < 1 || idx > m)
+            {
+                Console.WriteLine("Invalid constraint index.");
+                return;
+            }
+            int i = idx - 1;
+
+            Console.WriteLine($"Constraint {idx} current RHS = {model.Constraints[i].Rhs}");
+            Console.Write("New RHS value: ");
+            if (!double.TryParse(Console.ReadLine(), out double newRhs))
+            {
+                Console.WriteLine("Invalid value.");
+                return;
+            }
+
+            var clone = CloneModel(model);
+            clone.Constraints[i].Rhs = newRhs;
+
+            output.AppendHeader($"Apply Change - Constraint {idx} RHS {model.Constraints[i].Rhs} -> {newRhs}");
+            var newSolution = new PrimalSimplex().Solve(clone, output);
+            ReportChangeResult(solution, newSolution, output);
+        }
+
+        private static void AddNewActivity(LPModel model, Solution solution, OutputWriter output)
+        {
+            Console.Write("New activity's objective coefficient: ");
+            if (!double.TryParse(Console.ReadLine(), out double newObjCoeff))
+            {
+                Console.WriteLine("Invalid value.");
+                return;
+            }
+
+            int m = model.Constraints.Count;
+            var newColumn = new double[m];
+            for (int i = 0; i < m; i++)
+            {
+                Console.Write($"Coefficient in constraint {i + 1}: ");
+                if (!double.TryParse(Console.ReadLine(), out double coeff))
+                {
+                    Console.WriteLine("Invalid value.");
+                    return;
+                }
+                newColumn[i] = coeff;
+            }
+
+            var clone = CloneModel(model);
+            clone.ObjectiveCoefficients = clone.ObjectiveCoefficients.Append(newObjCoeff).ToArray();
+            clone.SignRestrictions = clone.SignRestrictions.Append(VariableType.Positive).ToArray();
+            for (int i = 0; i < m; i++)
+            {
+                clone.Constraints[i].Coefficients = clone.Constraints[i].Coefficients.Append(newColumn[i]).ToArray();
+            }
+
+            output.AppendHeader($"Add New Activity - x{clone.VariableCount} (c = {newObjCoeff})");
+            var newSolution = new PrimalSimplex().Solve(clone, output);
+            ReportChangeResult(solution, newSolution, output);
+        }
+
+        private static void AddNewConstraint(LPModel model, Solution solution, OutputWriter output)
+        {
+            int n = model.VariableCount;
+            var coeffs = new double[n];
+            for (int j = 0; j < n; j++)
+            {
+                Console.Write($"Coefficient for x{j + 1}: ");
+                if (!double.TryParse(Console.ReadLine(), out double coeff))
+                {
+                    Console.WriteLine("Invalid value.");
+                    return;
+                }
+                coeffs[j] = coeff;
+            }
+
+            Console.Write("Relation (<=, >=, =): ");
+            var relStr = Console.ReadLine()?.Trim();
+            RelationType relation;
+            if (relStr == "<=") relation = RelationType.LessOrEqual;
+            else if (relStr == ">=") relation = RelationType.GreaterOrEqual;
+            else if (relStr == "=") relation = RelationType.Equal;
+            else
+            {
+                Console.WriteLine("Invalid relation.");
+                return;
+            }
+
+            Console.Write("RHS: ");
+            if (!double.TryParse(Console.ReadLine(), out double rhs))
+            {
+                Console.WriteLine("Invalid value.");
+                return;
+            }
+
+            bool satisfied = CheckSatisfies(model, solution, coeffs, relation, rhs);
+            output.AppendHeader("Add New Constraint");
+            output.AppendLine(satisfied
+                ? "Current optimal solution already satisfies this constraint - solution remains optimal."
+                : "Current optimal solution violates this constraint - resolving with the constraint added.");
+
+            var clone = CloneModel(model);
+            clone.Constraints.Add(new Constraint { Coefficients = coeffs, Relation = relation, Rhs = rhs });
+            var newSolution = new PrimalSimplex().Solve(clone, output);
+            ReportChangeResult(solution, newSolution, output);
+        }
+
+        private static bool CheckSatisfies(LPModel model, Solution solution, double[] coeffs, RelationType relation, double rhs)
+        {
+            double lhs = 0;
+            for (int j = 0; j < model.VariableCount; j++)
+                lhs += coeffs[j] * solution.VariableValues[j];
+
+            switch (relation)
+            {
+                case RelationType.LessOrEqual: return lhs <= rhs + 1e-6;
+                case RelationType.GreaterOrEqual: return lhs >= rhs - 1e-6;
+                default: return Math.Abs(lhs - rhs) < 1e-6;
+            }
+        }
+
+        private static void ReportChangeResult(Solution oldSolution, Solution newSolution, OutputWriter output)
+        {
+            if (newSolution.Status != SolveStatus.Optimal)
+            {
+                output.AppendLine($"New status: {newSolution.Status}");
+                return;
+            }
+
+            output.AppendLine($"Previous objective: {OutputWriter.Round3(oldSolution.ObjectiveValue):0.000}");
+            output.AppendLine($"New objective: {OutputWriter.Round3(newSolution.ObjectiveValue):0.000}");
+            for (int j = 0; j < newSolution.VariableValues.Length; j++)
+                output.AppendLine($"x{j + 1} = {OutputWriter.Round3(newSolution.VariableValues[j]):0.000}");
+        }
+
+        private static LPModel CloneModel(LPModel source)
+        {
+            return new LPModel
+            {
+                Objective = source.Objective,
+                ObjectiveCoefficients = (double[])source.ObjectiveCoefficients.Clone(),
+                SignRestrictions = (VariableType[])source.SignRestrictions.Clone(),
+                Constraints = source.Constraints.Select(c => new Constraint
+                {
+                    Coefficients = (double[])c.Coefficients.Clone(),
+                    Relation = c.Relation,
+                    Rhs = c.Rhs
+                }).ToList()
+            };
         }
     }
 }
